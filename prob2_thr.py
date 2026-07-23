@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Plot threshold vs discard rate summaries for EVR detailed CSV folders.
+"""
+Problem 2: Threshold Drift
+
+Plot threshold vs discard rate summaries for EDC detailed CSV folders.
 
 Run:
-	python prob3_thr.py --root /home/bw/FIQA/evd_ijcb/output/evd/default_methods \
-	  --out-dir /home/bw/FIQA/evd_ijcb/output_submission/prob3_thr_plots
+	python prob2_thr.py --root /home/bw/FIQA/evd_ijcb/output/evd/default_methods \
+	  --out-dir /home/bw/FIQA/evd_ijcb/output_submission/prob2_thr_plots
 
-Searches under a root directory (default: output/evd) for EVR detailed folders
+Searches under a root directory (default: output/evd) for EDC detailed folders
 (`*_detailed`) and creates one threshold-vs-discard summary plot per folder.
 Each plot overlays all FIQA methods for the same dataset / FR model and highlights
 the mean threshold curve.
 
 By default, only the configured default FIQA methods are plotted. Use `--run-all`
-to include every method found in each detailed EVR folder.
+to include every method found in each detailed EDC folder.
 """
 
 from __future__ import annotations
@@ -441,7 +444,7 @@ def _load_original_impostor_similarities(
 	fr_model: str,
 	emb_tag: str,
 ) -> np.ndarray:
-	from prob2_test_set import compute_similarity, load_embeddings_pkl, load_pairs_csv  # type: ignore[reportMissingImports]
+	from prob1_test_set import compute_similarity, load_embeddings_pkl, load_pairs_csv  # type: ignore[reportMissingImports]
 
 	fr_features_root = Path(fr_features_root_str)
 	ca_fiqa_data_root = Path(ca_fiqa_data_root_str)

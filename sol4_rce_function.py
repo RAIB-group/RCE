@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Plot weighting functions used in sol4 ranking.
+"""Plot weighting functions used in RCE.
 
-This visualizes the weighting rule used in `sol4_ranking.py`:
+This visualizes the weighting rule used in `rce.py`:
 
 	w(s) = (R_H(s) / R) ** alpha
 
@@ -11,12 +11,12 @@ where:
 
 Run examples:
 
-	python sol4_ranking_function.py
+	python sol4_rce_function.py
 
-	python sol4_ranking_function.py \
+	python sol4_rce_function.py \
 		--max-rank 100 \
 		--alphas 0,10 \
-		--out output/sol4_weighting_function/sol4_weighting_function.pdf
+		--out output/sol4_rce_function/sol4_rce_function.pdf
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ import numpy as np  # type: ignore[reportMissingImports]
 
 DEFAULT_ALPHAS = [0.0, 1.0, 2.0, 3.0]
 DEFAULT_MAX_RANK = 1000
-DEFAULT_OUT = os.path.join("output", "sol4_weighting_function.pdf")
+DEFAULT_OUT = os.path.join("output", "sol4_rce_function.pdf")
 
 PLOT_FONT_SIZES = {
 	"labels": 32,
@@ -99,7 +99,7 @@ def _parse_alphas(value: str) -> list[float]:
 
 def main() -> None:
 	parser = argparse.ArgumentParser(
-		description="Plot weighting function used in sol4_ranking.py"
+		description="Plot weighting function used in RCE"
 	)
 	parser.add_argument(
 		"--max-rank",
@@ -115,7 +115,7 @@ def main() -> None:
 	parser.add_argument(
 		"--out",
 		default=DEFAULT_OUT,
-		help="Output image path (default: output/sol4_weighting_function.pdf)",
+		help="Output image path (default: output/sol4_rce_function.pdf)",
 	)
 	args = parser.parse_args()
 

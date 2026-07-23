@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-"""EVR (Error vs Reject) batch runner for IJCB EVD Problem 2.
+"""Error vs Discard Characteristic (EDC) - Problem 1: Test-Set Divergence.
+
+
 
 Run:
 
-    python prob2_test_set.py \
+    python prob1_test_set_same_pairs.py \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --ca-fiqa-data-root /home/bw/FIQA/ca-fiqa/data \
-        --out-root output_submission/prob2_test_set \
+        --out-root output_submission/prob1_test_set_same_pairs \
         --threshold-method roc \
         --skip-evr-plot \
         --skip-additional-plots
 
 To run everything (all datasets / all FR models found under `--fr-features-root`):
 
-    python prob2_test_set.py --run-all --skip-evr-plot --skip-additional-plots  
+    python prob1_test_set_same_pairs.py --run-all --skip-evr-plot --skip-additional-plots
 
 This script scans all datasets and FR models under:
 
@@ -31,7 +33,7 @@ EVR comparison plot across all FIQA methods found under:
 
 Outputs are written to:
 
-    output_submission/prob2_test_set/{dataset_name}/{fr_model}/
+    output_submission/prob1_test_set_same_pairs/{dataset_name}/{fr_model}/
 """
 
 import os
@@ -45,7 +47,7 @@ import pandas as pd  # type: ignore[reportMissingImports]
 DEFAULT_FR_FEATURES_ROOT = "/home/bw/FIQA/fiq_baselines/fr_features"
 DEFAULT_QUALITY_DIR = "/home/bw/FIQA/fiq_baselines/quality_scores"
 DEFAULT_CA_FIQA_DATA_ROOT = "/home/bw/FIQA/ca-fiqa/data"
-DEFAULT_OUT_ROOT = os.path.join("output_submission", "prob2_test_set")
+DEFAULT_OUT_ROOT = os.path.join("output_submission", "prob1_test_set_same_pairs")
 
 DATASET_DISPLAY_NAMES = {
     "adience": "Adience",
@@ -90,7 +92,6 @@ METHOD_PLOT_ORDER = [
     "grafiqs",
     "froqAda",
     "pfe",
-    "pcnet",
     "vit-fiqa",
 
     # Diffusion-based
@@ -127,12 +128,11 @@ METHOD_COLOR_PALETTE = [
 DEFAULT_DATASET_ALLOWLIST = ["adience", "lfw", "calfw", "cplfw", "xqlfw"]
 DEFAULT_FR_MODEL_ALLOWLIST = ["adaface", "arcface_o", "magface","swinface"]
 
+# Problem 1 (different test set at each discard level)
+DEFAULT_PROB1_DISCARD_RATE = 0.30
+DEFAULT_PROB1_FIQA_METHOD_A = "ser-fiq"
 
-# Problem 2 (different test set at each discard level)
-DEFAULT_PROB2_DISCARD_RATE = 0.30
-DEFAULT_PROB2_FIQA_METHOD_A = "ser-fiq"
-
-# DEFAULT_PROB2_FIQA_METHOD_BS = ["magface", "faceqnet", "sdd-fiqa", "ediffiqa(L)",
+# DEFAULT_PROB1_FIQA_METHOD_BS = ["magface", "faceqnet", "sdd-fiqa", "ediffiqa(L)",
 #     "diffiqa(R)",
 #     "cr-fiqa(L)",
 #     "clib-fiqa",
@@ -143,7 +143,7 @@ DEFAULT_PROB2_FIQA_METHOD_A = "ser-fiq"
 #     "faceqan",]
 
 
-DEFAULT_PROB2_FIQA_METHOD_BS = [
+DEFAULT_PROB1_FIQA_METHOD_BS = [
     "ediffiqa(L)",
     "diffiqa(R)",
     "cr-fiqa(L)",
@@ -344,7 +344,7 @@ def _pair_counts_for_retained_set(
     }
 
 
-def _save_prob2_bar_chart(
+def _save_prob1_bar_chart(
     *,
     method_a: str,
     method_b: str,
@@ -446,7 +446,7 @@ def _save_prob2_bar_chart(
     plt.close(fig)
 
 
-def _save_prob2_confusion_heatmap(
+def _save_prob1_confusion_heatmap(
     *,
     method_a: str,
     method_b: str,
@@ -505,7 +505,7 @@ def _save_prob2_confusion_heatmap(
     plt.close(fig)
 
 
-def _save_prob2_pair_retention_ratios(
+def _save_prob1_pair_retention_ratios(
     *,
     method_a: str,
     method_b: str,
@@ -573,7 +573,7 @@ def _save_prob2_pair_retention_ratios(
     plt.close(fig)
 
 
-def _save_prob2_overlap_curve(
+def _save_prob1_overlap_curve(
     *,
     method_a: str,
     method_b: str,
@@ -678,7 +678,7 @@ def _nanmean_std_by_column(values: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return mean, std
 
 
-def _save_prob2_group_sample_overlap_plot(
+def _save_prob1_group_sample_overlap_plot(
     *,
     group_method_names: list[str],
     method_quality_dfs: dict[str, pd.DataFrame],
@@ -782,7 +782,7 @@ def _save_prob2_group_sample_overlap_plot(
     plt.close(fig)
 
 
-def _save_prob2_group_pair_overlap_plot(
+def _save_prob1_group_pair_overlap_plot(
     *,
     group_method_names: list[str],
     method_quality_dfs: dict[str, pd.DataFrame],
@@ -927,7 +927,7 @@ def _save_prob2_group_pair_overlap_plot(
     plt.close(fig)
 
 
-def _save_prob2_reference_sample_overlap_plot(
+def _save_prob1_reference_sample_overlap_plot(
     *,
     reference_method: str,
     method_quality_dfs: dict[str, pd.DataFrame],
@@ -1039,7 +1039,7 @@ def _save_prob2_reference_sample_overlap_plot(
     plt.close(fig)
 
 
-def _save_prob2_reference_pair_overlap_plot(
+def _save_prob1_reference_pair_overlap_plot(
     *,
     reference_method: str,
     method_quality_dfs: dict[str, pd.DataFrame],
@@ -1177,7 +1177,7 @@ def _save_prob2_reference_pair_overlap_plot(
     plt.close(fig)
 
 
-def _save_prob2_pair_stability_curves(
+def _save_prob1_pair_stability_curves(
     *,
     method_a: str,
     method_b: str,
@@ -1286,7 +1286,7 @@ def _save_prob2_pair_stability_curves(
         )
 
 
-def _save_prob2_pair_overlap_curve(
+def _save_prob1_pair_overlap_curve(
     *,
     method_a: str,
     method_b: str,
@@ -1347,7 +1347,7 @@ def _save_prob2_pair_overlap_curve(
     plt.close(fig)
 
 
-def _save_prob2_pair_instability(
+def _save_prob1_pair_instability(
     *,
     method_a: str,
     method_b: str,
@@ -1405,7 +1405,7 @@ def _save_prob2_pair_instability(
     plt.close(fig)
 
 
-def _save_prob2_concrete_example(
+def _save_prob1_concrete_example(
     *,
     method_a: str,
     method_b: str,
@@ -1468,9 +1468,9 @@ def run_problem2_divergence(
     quality_dir: str,
     pairs_csv: str,
     out_dir: str,
-    discard_rate: float = DEFAULT_PROB2_DISCARD_RATE,
-    method_a: str = DEFAULT_PROB2_FIQA_METHOD_A,
-    method_b: str | list[str] = DEFAULT_PROB2_FIQA_METHOD_BS,
+    discard_rate: float = DEFAULT_PROB1_DISCARD_RATE,
+    method_a: str = DEFAULT_PROB1_FIQA_METHOD_A,
+    method_b: str | list[str] = DEFAULT_PROB1_FIQA_METHOD_BS,
     skip_additional_plots: bool = False,
 ):
     """Problem 2: show that FIQA methods induce different retained sets at fixed discard rate."""
@@ -1549,11 +1549,11 @@ def run_problem2_divergence(
         os.makedirs(out_dir_ab, exist_ok=True)
         prefix = os.path.join(
             out_dir_ab,
-            f"prob2_r{int(round(discard_rate * 100)):02d}_{method_a}_vs_{mb}",
+            f"prob1_r{int(round(discard_rate * 100)):02d}_{method_a}_vs_{mb}",
         )
 
         # Option A: stacked bar chart
-        _save_prob2_bar_chart(
+        _save_prob1_bar_chart(
             method_a=method_a,
             method_b=mb,
             counts_original=counts_original,
@@ -1563,7 +1563,7 @@ def run_problem2_divergence(
         )
 
         # Option B: confusion heatmap (retained/removed)
-        _save_prob2_confusion_heatmap(
+        _save_prob1_confusion_heatmap(
             method_a=method_a,
             method_b=mb,
             retained_a=retained_a,
@@ -1574,7 +1574,7 @@ def run_problem2_divergence(
         )
 
         # Option B2: normalized pair-set retention ratios (clean bar chart)
-        _save_prob2_pair_retention_ratios(
+        _save_prob1_pair_retention_ratios(
             method_a=method_a,
             method_b=mb,
             counts_original=counts_original,
@@ -1585,7 +1585,7 @@ def run_problem2_divergence(
         )
 
         # Option C: overlap vs discard rate (image sets)
-        _save_prob2_overlap_curve(
+        _save_prob1_overlap_curve(
             method_a=method_a,
             method_b=mb,
             img_ids=img_ids,
@@ -1596,7 +1596,7 @@ def run_problem2_divergence(
         )
 
         # Option D: pair overlap vs discard rate (all/genuine/impostor)
-        _save_prob2_pair_overlap_curve(
+        _save_prob1_pair_overlap_curve(
             method_a=method_a,
             method_b=mb,
             img_ids=img_ids,
@@ -1607,7 +1607,7 @@ def run_problem2_divergence(
             label_filter=None,
             out_path=prefix + "_pair_overlap_all.pdf",
         )
-        _save_prob2_pair_overlap_curve(
+        _save_prob1_pair_overlap_curve(
             method_a=method_a,
             method_b=mb,
             img_ids=img_ids,
@@ -1618,7 +1618,7 @@ def run_problem2_divergence(
             label_filter=1,
             out_path=prefix + "_pair_overlap_genuine.pdf",
         )
-        _save_prob2_pair_overlap_curve(
+        _save_prob1_pair_overlap_curve(
             method_a=method_a,
             method_b=mb,
             img_ids=img_ids,
@@ -1631,7 +1631,7 @@ def run_problem2_divergence(
         )
 
         # Option D2: pair stability curves (global vs original, adjacent-step churn)
-        _save_prob2_pair_stability_curves(
+        _save_prob1_pair_stability_curves(
             method_a=method_a,
             method_b=mb,
             img_ids=img_ids,
@@ -1644,7 +1644,7 @@ def run_problem2_divergence(
         )
 
         # Option E: pair set instability (combined)
-        _save_prob2_pair_instability(
+        _save_prob1_pair_instability(
             method_a=method_a,
             method_b=mb,
             img_ids=img_ids,
@@ -1656,7 +1656,7 @@ def run_problem2_divergence(
         )
 
         # Option F: concrete example at current discard
-        _save_prob2_concrete_example(
+        _save_prob1_concrete_example(
             method_a=method_a,
             method_b=mb,
             retained_a=retained_a,
@@ -1668,12 +1668,12 @@ def run_problem2_divergence(
         # Option G: table
         pd.DataFrame([row]).to_csv(prefix + "_table.csv", index=False)
         print(
-			f"[prob2] Saved: {prefix}_bar.pdf, {prefix}_confusion_heatmap.pdf, {prefix}_pair_retention_ratios.pdf, {prefix}_overlap_curve.pdf, {prefix}_pair_overlap_all.pdf, {prefix}_pair_overlap_genuine.pdf, {prefix}_pair_overlap_impostor.pdf, {prefix}_{method_a}_pair_stability_global.pdf, {prefix}_{method_a}_pair_stability_adjacent.pdf, {prefix}_{mb}_pair_stability_global.pdf, {prefix}_{mb}_pair_stability_adjacent.pdf, {prefix}_pair_instability.pdf, {prefix}_overlap_example.pdf, {prefix}_table.csv"
+			f"[prob1] Saved: {prefix}_bar.pdf, {prefix}_confusion_heatmap.pdf, {prefix}_pair_retention_ratios.pdf, {prefix}_overlap_curve.pdf, {prefix}_pair_overlap_all.pdf, {prefix}_pair_overlap_genuine.pdf, {prefix}_pair_overlap_impostor.pdf, {prefix}_{method_a}_pair_stability_global.pdf, {prefix}_{method_a}_pair_stability_adjacent.pdf, {prefix}_{mb}_pair_stability_global.pdf, {prefix}_{mb}_pair_stability_adjacent.pdf, {prefix}_pair_instability.pdf, {prefix}_overlap_example.pdf, {prefix}_table.csv"
         )
 
     if len(method_quality_dfs) > 1:
-        compact_prefix = os.path.join(out_dir, f"prob2_reference_{str(method_a).replace('-', '_')}")
-        _save_prob2_reference_pair_overlap_plot(
+        compact_prefix = os.path.join(out_dir, f"prob1_reference_{str(method_a).replace('-', '_')}")
+        _save_prob1_reference_pair_overlap_plot(
             reference_method=str(method_a),
             method_quality_dfs=method_quality_dfs,
             img_ids=img_ids,
@@ -1681,7 +1681,7 @@ def run_problem2_divergence(
             discard_rates=discard_rates,
 			out_path=compact_prefix + "_pair_overlap_summary.pdf",
         )
-        _save_prob2_reference_sample_overlap_plot(
+        _save_prob1_reference_sample_overlap_plot(
             reference_method=str(method_a),
             method_quality_dfs=method_quality_dfs,
             img_ids=img_ids,
@@ -1689,13 +1689,13 @@ def run_problem2_divergence(
             out_path=compact_prefix + "_sample_overlap_summary.pdf",
         )
         print(
-            f"[prob2] Saved: {compact_prefix}_pair_overlap_summary.pdf, {compact_prefix}_sample_overlap_summary.pdf"
+            f"[prob1] Saved: {compact_prefix}_pair_overlap_summary.pdf, {compact_prefix}_sample_overlap_summary.pdf"
         )
 
     group1_methods = _resolve_requested_methods(GROUP_1_METHOD, method_quality_dfs)
     if len(group1_methods) > 1:
-        group1_pair_out_path = os.path.join(out_dir, "prob2_group1_pair_overlap_summary.pdf")
-        _save_prob2_group_pair_overlap_plot(
+        group1_pair_out_path = os.path.join(out_dir, "prob1_group1_pair_overlap_summary.pdf")
+        _save_prob1_group_pair_overlap_plot(
             group_method_names=group1_methods,
             method_quality_dfs=method_quality_dfs,
             img_ids=img_ids,
@@ -1703,8 +1703,8 @@ def run_problem2_divergence(
             discard_rates=discard_rates,
             out_path=group1_pair_out_path,
         )
-        group1_sample_out_path = os.path.join(out_dir, "prob2_group_1_sample_overlap_summary.pdf")
-        _save_prob2_group_sample_overlap_plot(
+        group1_sample_out_path = os.path.join(out_dir, "prob1_group_1_sample_overlap_summary.pdf")
+        _save_prob1_group_sample_overlap_plot(
             group_method_names=group1_methods,
             method_quality_dfs=method_quality_dfs,
             img_ids=img_ids,
@@ -1712,7 +1712,7 @@ def run_problem2_divergence(
             out_path=group1_sample_out_path,
         )
         print(
-            f"[prob2] Saved: {group1_pair_out_path}, {group1_sample_out_path}"
+            f"[prob1] Saved: {group1_pair_out_path}, {group1_sample_out_path}"
         )
 
 
@@ -1854,9 +1854,9 @@ def error_vs_reject(embeddings, pairs_df, quality_df, id_to_idx,
     Returns:
         reject_rates: Array of rejection rates
         fnmrs: Array of FNMR values
-        detailed_results: List of dicts with comprehensive metrics (13 columns)
+        detailed_results: List of dicts with comprehensive metrics
         quality_df: Quality scores dataframe
-        rejection_info: List of lists - rejected image info per step
+        rejection_info: List of lists - rejected pair info per step
     """
     # Convert reject_steps to array if it's an integer
     if isinstance(reject_steps, int):
@@ -1872,10 +1872,8 @@ def error_vs_reject(embeddings, pairs_df, quality_df, id_to_idx,
         for i1, i2, lbl in zip(pairs_df["img1_id"], pairs_df["img2_id"], pairs_df["label"])
     ], dtype=int)
 
-    # Ensure consistent ordering between embeddings and quality scores
     quality_map = dict(zip(quality_df["image_id"], quality_df["score"]))
     img_ids = list(id_to_idx.keys())  # Deterministic order
-    quality_scores = np.array([quality_map.get(img_id, 0.0) for img_id in img_ids])
 
     sims = compute_similarity(embeddings, pairs_idx)
     labels = pairs_idx[:, 2].astype(int)
@@ -1884,15 +1882,55 @@ def error_vs_reject(embeddings, pairs_df, quality_df, id_to_idx,
     detailed_results = []
     rejection_info = []  # Store per-step rejection info
 
-    for reject_fraction in reject_steps:
-        # Sort by quality (low to high) and reject bottom fraction
-        sorted_idx = np.argsort(quality_scores)  # low → high
-        num_reject = int(reject_fraction * len(sorted_idx))
-        reject_idx = sorted_idx[:num_reject]
-        keep_idx = sorted_idx[num_reject:]
+    pair_q = np.array([
+        min(quality_map.get(img_ids[i1], 0.0), quality_map.get(img_ids[i2], 0.0))
+        for i1, i2 in pairs_idx[:, :2]
+    ])
 
-        # Keep only pairs where both images are in keep_idx
-        mask_keep = np.isin(pairs_idx[:, 0], keep_idx) & np.isin(pairs_idx[:, 1], keep_idx)
+    for reject_fraction in reject_steps:
+        # Reject low-quality pairs proportionally to class sizes.
+        gen_idx = np.where(labels == 1)[0]
+        imp_idx = np.where(labels == 0)[0]
+        total_pairs = len(labels)
+        n_gen = len(gen_idx)
+        n_imp = len(imp_idx)
+        target_reject_total = int(reject_fraction * total_pairs)
+
+        if target_reject_total <= 0:
+            reject_gen = np.array([], dtype=int)
+            reject_imp = np.array([], dtype=int)
+        else:
+            target_reject_gen = int(round(target_reject_total * (n_gen / total_pairs)))
+            target_reject_gen = min(target_reject_gen, n_gen)
+
+            target_reject_imp = target_reject_total - target_reject_gen
+            target_reject_imp = min(target_reject_imp, n_imp)
+
+            assigned_total = target_reject_gen + target_reject_imp
+            remaining_budget = target_reject_total - assigned_total
+
+            if remaining_budget > 0:
+                extra_gen_capacity = n_gen - target_reject_gen
+                add_gen = min(remaining_budget, extra_gen_capacity)
+                target_reject_gen += add_gen
+                remaining_budget -= add_gen
+
+            if remaining_budget > 0:
+                extra_imp_capacity = n_imp - target_reject_imp
+                add_imp = min(remaining_budget, extra_imp_capacity)
+                target_reject_imp += add_imp
+                remaining_budget -= add_imp
+
+            gen_order = gen_idx[np.argsort(pair_q[gen_idx])]
+            imp_order = imp_idx[np.argsort(pair_q[imp_idx])]
+
+            reject_gen = gen_order[:target_reject_gen]
+            reject_imp = imp_order[:target_reject_imp]
+
+        reject_pairs = np.concatenate([reject_gen, reject_imp])
+
+        mask_keep = np.ones(total_pairs, dtype=bool)
+        mask_keep[reject_pairs] = False
 
         sims_keep = sims[mask_keep]
         labels_keep = labels[mask_keep]
@@ -1929,21 +1967,25 @@ def error_vs_reject(embeddings, pairs_df, quality_df, id_to_idx,
         imp_below = np.sum(impostor_sims < thr) if len(impostor_sims) > 0 else 0
         imp_above = np.sum(impostor_sims >= thr) if len(impostor_sims) > 0 else 0
 
-        reject_rates.append(reject_fraction)
+        actual_reject_count = len(reject_pairs)
+        actual_reject_rate = actual_reject_count / total_pairs if total_pairs else 0.0
+        reject_rates.append(actual_reject_rate)
         fnmrs.append(fnmr)
         
         # Comprehensive results with sample counts
         detailed_results.append({
-            "reject_rate": reject_fraction,
+            "reject_rate": actual_reject_rate,
             "threshold": thr,
             "fmr": actual_fmr,  # Use actual FMR from threshold calculation
             "fnmr": fnmr,
-            "total_samples": len(quality_scores),
-            "samples_rejected": num_reject,
-            "samples_remaining": len(keep_idx),
+            "total_pairs": total_pairs,
+            "pairs_rejected": int(actual_reject_count),
+            "pairs_remaining": int(total_pairs - actual_reject_count),
             "total_pairs_after_rejection": genuine_remaining + impostor_remaining,
             "genuine_pairs_after_rejection": genuine_remaining,
             "impostor_pairs_after_rejection": impostor_remaining,
+            "rejected_genuine_pairs": int(len(reject_gen)),
+            "rejected_impostor_pairs": int(len(reject_imp)),
             "genuine_below_threshold": gen_below,
             "genuine_above_threshold": gen_above,
             "impostor_below_threshold": imp_below,
@@ -1952,16 +1994,17 @@ def error_vs_reject(embeddings, pairs_df, quality_df, id_to_idx,
             "total_impostor_pairs_before_rejection": total_impostor
         })
         
-        # Store rejection information for this step (non-duplicated)
-        rejected_images_this_step = [
-            {
-                "image_id": img_ids[idx],
-                "quality_score": quality_scores[idx],
-                "reject_fraction": reject_fraction
-            }
-            for idx in reject_idx
-        ]
-        rejection_info.append(rejected_images_this_step)
+        rejected_pairs_this_step = []
+        for pair_idx in reject_pairs:
+            i1, i2, lbl = pairs_idx[pair_idx]
+            rejected_pairs_this_step.append({
+                "img1_id": img_ids[i1],
+                "img2_id": img_ids[i2],
+                "label": int(lbl),
+                "pair_quality": float(pair_q[pair_idx]),
+                "reject_fraction": actual_reject_rate,
+            })
+        rejection_info.append(rejected_pairs_this_step)
 
     # Ensure reject_rates and fnmrs are numpy arrays of the same length
     reject_rates = np.array(reject_rates)
@@ -1989,6 +2032,87 @@ def compute_pauc(reject_rates, fnmrs, max_reject=0.3):
 
 def _quality_pkl_for_dataset(method_dir: str, dataset_name: str) -> str:
     return os.path.join(method_dir, f"{dataset_name}-quality.pkl")
+
+
+def save_rejection_summaries_only(
+    *,
+    dataset_name: str,
+    embeddings_pkl: str,
+    quality_methods_dir: str,
+    pairs_csv: str,
+    out_dir: str,
+    emb_tag: str,
+    fmr_target: float = 1e-3,
+    reject_steps=None,
+    threshold_method: str = "percentile",
+):
+    """Save per-method rejection summaries without generating EVR plots."""
+    if reject_steps is None:
+        reject_steps = np.arange(0, 0.98, 0.05)
+
+    embeddings, id_to_idx = load_embeddings_pkl(embeddings_pkl)
+    pairs_df = load_pairs_csv(pairs_csv)
+
+    rejection_summary_dir = os.path.join(out_dir, "rejection_summaries", str(emb_tag))
+    os.makedirs(rejection_summary_dir, exist_ok=True)
+
+    saved_any = False
+    for d in sorted(os.listdir(quality_methods_dir)):
+        method_dir = os.path.join(quality_methods_dir, d)
+        if not os.path.isdir(method_dir) or d.startswith("."):
+            continue
+
+        qpath = _quality_pkl_for_dataset(method_dir, dataset_name)
+        if not os.path.exists(qpath):
+            continue
+
+        qdf = load_quality_scores_pkl(qpath)
+        _, _, detailed_results, _, _ = error_vs_reject(
+            embeddings,
+            pairs_df,
+            qdf,
+            id_to_idx,
+            reject_steps=reject_steps,
+            fmr_target=fmr_target,
+            threshold_method=threshold_method,
+        )
+
+        detailed_df = pd.DataFrame(detailed_results)
+        summary_cols = [
+            "rejection_rate",
+            "total_gen",
+            "total_imp",
+            "total_pairs",
+            "rejected_gen",
+            "rejected_imp",
+            "total_rejected_pairs",
+        ]
+        if detailed_df.empty:
+            summary_df = pd.DataFrame(columns=summary_cols)
+        else:
+            summary_df = pd.DataFrame({
+                "rejection_rate": detailed_df["reject_rate"],
+                "total_gen": detailed_df["total_genuine_pairs_before_rejection"],
+                "total_imp": detailed_df["total_impostor_pairs_before_rejection"],
+                "total_pairs": detailed_df["total_pairs"],
+                "rejected_gen": detailed_df["rejected_genuine_pairs"],
+                "rejected_imp": detailed_df["rejected_impostor_pairs"],
+                "total_rejected_pairs": detailed_df["pairs_rejected"],
+            })
+
+        safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in str(d))
+        summary_df.to_csv(
+            os.path.join(rejection_summary_dir, f"{safe}_rejection_summary.csv"),
+            index=False,
+        )
+        saved_any = True
+
+    if not saved_any:
+        raise FileNotFoundError(
+            f"No quality PKLs found for dataset '{dataset_name}' under: {quality_methods_dir}"
+        )
+
+    print(f"Saved rejection summary CSVs: {rejection_summary_dir}/")
 
 
 def plot_evr_compare_dataset(
@@ -2096,13 +2220,49 @@ def plot_evr_compare_dataset(
     out_prefix = os.path.splitext(out_path)[0]
     detailed_dir = out_prefix + "_detailed"
     os.makedirs(detailed_dir, exist_ok=True)
+
+    # Keep rejection summaries outside additional_plots.
+    out_path_dir = os.path.dirname(out_path)
+    parent_dir = os.path.dirname(out_path_dir)
+    if os.path.basename(out_path_dir) == "additional_plots" and parent_dir:
+        rejection_summary_dir = os.path.join(parent_dir, "rejection_summaries")
+    else:
+        rejection_summary_dir = os.path.join(out_path_dir, "rejection_summaries")
+    os.makedirs(rejection_summary_dir, exist_ok=True)
+
     for method_name, detailed in detailed_by_method.items():
         safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in str(method_name))
-        pd.DataFrame(detailed).to_csv(os.path.join(detailed_dir, f"{safe}.csv"), index=False)
+        detailed_df = pd.DataFrame(detailed)
+        detailed_df.to_csv(os.path.join(detailed_dir, f"{safe}.csv"), index=False)
+
+        # Save compact rejection accounting table with stable column names.
+        summary_cols = [
+            "rejection_rate",
+            "total_gen",
+            "total_imp",
+            "total_pairs",
+            "rejected_gen",
+            "rejected_imp",
+            "total_rejected_pairs",
+        ]
+        if detailed_df.empty:
+            summary_df = pd.DataFrame(columns=summary_cols)
+        else:
+            summary_df = pd.DataFrame({
+                "rejection_rate": detailed_df["reject_rate"],
+                "total_gen": detailed_df["total_genuine_pairs_before_rejection"],
+                "total_imp": detailed_df["total_impostor_pairs_before_rejection"],
+                "total_pairs": detailed_df["total_pairs"],
+                "rejected_gen": detailed_df["rejected_genuine_pairs"],
+                "rejected_imp": detailed_df["rejected_impostor_pairs"],
+                "total_rejected_pairs": detailed_df["pairs_rejected"],
+            })
+        summary_df.to_csv(os.path.join(rejection_summary_dir, f"{safe}_rejection_summary.csv"), index=False)
 
     print(f"Saved plot: {out_path}")
     print(f"Saved pAUC table: {pauc_csv}")
     print(f"Saved detailed CSVs: {detailed_dir}/")
+    print(f"Saved rejection summary CSVs: {rejection_summary_dir}/")
 
 
 def _save_combined_grid_image(png_paths, titles, out_path, ncols=3):
@@ -2181,7 +2341,7 @@ def _list_embeddings_pkls(dir_path: str) -> list[str]:
     return preferred if len(preferred) else entries
 
 
-def run_prob2_test_set_batch(
+def run_prob1_test_set_batch(
     *,
     fr_features_root: str = DEFAULT_FR_FEATURES_ROOT,
     quality_dir: str = DEFAULT_QUALITY_DIR,
@@ -2291,7 +2451,8 @@ def run_prob2_test_set_batch(
             out_path = os.path.join(additional_plots_dir, f"evr_compare__{emb_tag}.pdf")
             print(f"[run] {dataset_name}/{fr_model}/{emb_tag} -> {out_path}")
             try:
-                if (not skip_additional_plots) and (not skip_evr_plot):
+                evr_plot_enabled = (not skip_additional_plots) and (not skip_evr_plot)
+                if evr_plot_enabled:
                     os.makedirs(additional_plots_dir, exist_ok=True)
                     plot_evr_compare_dataset(
                         dataset_name=dataset_name,
@@ -2299,6 +2460,18 @@ def run_prob2_test_set_batch(
                         quality_methods_dir=quality_dir,
                         pairs_csv=pairs_csv,
                         out_path=out_path,
+                        fmr_target=fmr_target,
+                        reject_steps=reject_steps,
+                        threshold_method=threshold_method,
+                    )
+                else:
+                    save_rejection_summaries_only(
+                        dataset_name=dataset_name,
+                        embeddings_pkl=emb_pkl,
+                        quality_methods_dir=quality_dir,
+                        pairs_csv=pairs_csv,
+                        out_dir=out_dir,
+                        emb_tag=emb_tag,
                         fmr_target=fmr_target,
                         reject_steps=reject_steps,
                         threshold_method=threshold_method,
@@ -2312,9 +2485,9 @@ def run_prob2_test_set_batch(
                     quality_dir=quality_dir,
                     pairs_csv=pairs_csv,
                     out_dir=out_dir,
-                    discard_rate=DEFAULT_PROB2_DISCARD_RATE,
-                    method_a=DEFAULT_PROB2_FIQA_METHOD_A,
-                    method_b=DEFAULT_PROB2_FIQA_METHOD_BS,
+                    discard_rate=DEFAULT_PROB1_DISCARD_RATE,
+                    method_a=DEFAULT_PROB1_FIQA_METHOD_A,
+                    method_b=DEFAULT_PROB1_FIQA_METHOD_BS,
                     skip_additional_plots=skip_additional_plots,
                 )
             except Exception as e:
@@ -2343,7 +2516,7 @@ if __name__ == "__main__":
     p.add_argument(
         "--out-root",
         default=DEFAULT_OUT_ROOT,
-        help="Output root directory (default: output/prob2_test_set)",
+        help="Output root directory (default: output/prob1_test_set_same_pairs)",
     )
     p.add_argument(
         "--run-all",
@@ -2369,7 +2542,7 @@ if __name__ == "__main__":
     )
     args = p.parse_args()
 
-    run_prob2_test_set_batch(
+    run_prob1_test_set_batch(
         fr_features_root=args.fr_features_root,
         quality_dir=args.quality_dir,
         ca_fiqa_data_root=args.ca_fiqa_data_root,

@@ -1,38 +1,38 @@
 #!/usr/bin/env python3
-"""EVR (Error vs Reject)
+"""EDC (Error vs Discard Characteristic)
 
 Run:
 
-    python evd.py \
+    python edc.py \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --ca-fiqa-data-root /home/bw/FIQA/ca-fiqa/data \
-        --out-root output/evd \
+        --out-root output/edc \
         --threshold-method percentile
 
 To run everything (all datasets / all FR models found under `--fr-features-root`):
 
-    python evd.py \
+    python edc.py \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --ca-fiqa-data-root /home/bw/FIQA/ca-fiqa/data \
-        --out-root output/evd \
+        --out-root output/edc \
         --threshold-method percentile \
         --run-all
 
-    python evd.py \
+    python edc.py \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --ca-fiqa-data-root /home/bw/FIQA/ca-fiqa/data \
-        --out-root output/evd \
+        --out-root output/edc \
         --threshold-method percentile
 
 
-    python evd.py \
+    python edc.py \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --ca-fiqa-data-root /home/bw/FIQA/ca-fiqa/data \
-        --out-root output/evd \
+        --out-root output/edc \
         --threshold-method roc \
         --save-all-methods-values
 
@@ -53,12 +53,12 @@ EVR comparison plot across all FIQA methods found under:
 
 Outputs are written to:
 
-    output/evd/{dataset_name}/{fr_model}/
+    output/edc/{dataset_name}/{fr_model}/
 
 Folder mode:
 
-    default run  -> output/evd/default_methods/{fr_model}/{dataset_name}/
-    --run-all    -> output/evd/all_methods/{fr_model}/{dataset_name}/
+    default run  -> output/edc/default_methods/{fr_model}/{dataset_name}/
+    --run-all    -> output/edc/all_methods/{fr_model}/{dataset_name}/
 """
 
 import os
@@ -70,7 +70,7 @@ import pandas as pd
 DEFAULT_FR_FEATURES_ROOT = "/home/bw/FIQA/fiq_baselines/fr_features"
 DEFAULT_QUALITY_DIR = "/home/bw/FIQA/fiq_baselines/quality_scores"
 DEFAULT_CA_FIQA_DATA_ROOT = "/home/bw/FIQA/ca-fiqa/data"
-DEFAULT_OUT_ROOT = os.path.join("output", "evd")
+DEFAULT_OUT_ROOT = os.path.join("output", "edc")
 
 # Default allowlists (used unless --run-all is passed)
 DEFAULT_DATASET_ALLOWLIST = ["adience", "lfw","cfp-fp" ,"agedb", "calfw", "cplfw", "xqlfw"]
@@ -1003,7 +1003,7 @@ def run_prob2_test_set_batch(
 if __name__ == "__main__":
     import argparse
 
-    p = argparse.ArgumentParser(description="Batch-run EVR for IJCB EVD Problem 2")
+    p = argparse.ArgumentParser(description="Batch-run EDC for IJCB EDC Problem 2")
     p.add_argument(
         "--fr-features-root",
         default=DEFAULT_FR_FEATURES_ROOT,
@@ -1022,7 +1022,7 @@ if __name__ == "__main__":
     p.add_argument(
         "--out-root",
         default=DEFAULT_OUT_ROOT,
-        help="Output root directory (default: output/evd)",
+        help="Output root directory (default: output/edc)",
     )
     p.add_argument(
         "--run-all",

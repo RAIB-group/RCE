@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""EVR (Error vs Discard Characteristic) curve generation for face image quality assessment methods.
+"""Plot EDC for the ranking computed by the RCE metric.
 
 Run:
 
 To run everything (all datasets / all FR models found under `--fr-features-root`):
 
-    python evd_rank_quality.py --run-all
+    python edc_rank_quality.py --run-all
 
 To run from ranking CSVs (harm ranking mode):
 
-    python evd_rank_quality.py \
+    python edc_rank_quality.py \
         --rank-root /home/bw/FIQA/evd_ijcb/output/sol3_rank_sample \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
