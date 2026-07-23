@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FIQA harm-based evaluation (fixed threshold at FMR=0.001).
+"""Rank Consistency Evaluation (RCE) (fixed threshold at FMR=0.001).
 
 Run:
 
@@ -30,20 +30,22 @@ verification threshold (FMR=0.001) and evaluates FIQA quality scores against har
 
 Outputs are written to:
 
-    output/sol4_rank_sample/{dataset_name}/{fr_model}/
+    output/rce/{dataset_name}/{fr_model}/
 """
 
 import os
 import pickle
 
 import numpy as np  # type: ignore[reportMissingImports]
-import pandas as pd  # type: ignore[reportMissingImports]
+import pandas as pd
+
+from prob1_test_set import run_prob1_test_set_batch  # type: ignore[reportMissingImports]
 
 
 DEFAULT_FR_FEATURES_ROOT = "/home/bw/FIQA/fiq_baselines/fr_features"
 DEFAULT_QUALITY_DIR = "/home/bw/FIQA/fiq_baselines/quality_scores"
 DEFAULT_CA_FIQA_DATA_ROOT = "/home/bw/FIQA/ca-fiqa/data"
-DEFAULT_OUT_ROOT = os.path.join("output", "sol4_rank_sample")
+DEFAULT_OUT_ROOT = os.path.join("output", "rce")
 DEFAULT_WEIGHT_ALPHAS = [0.0, 1.0, 2.0, 3.0]
 
 # Default allowlists (used unless --run-all is passed)
@@ -743,7 +745,7 @@ def _list_embeddings_pkls(dir_path: str) -> list[str]:
     return preferred if len(preferred) else entries
 
 
-def run_prob2_test_set_batch(
+def run_prob1_test_set_batch(
     *,
     fr_features_root: str = DEFAULT_FR_FEATURES_ROOT,
     quality_dir: str = DEFAULT_QUALITY_DIR,
@@ -986,7 +988,7 @@ if __name__ == "__main__":
     if len(alpha_values) == 0:
         alpha_values = list(DEFAULT_WEIGHT_ALPHAS)
 
-    run_prob2_test_set_batch(
+    run_prob1_test_set_batch(
         fr_features_root=args.fr_features_root,
         quality_dir=args.quality_dir,
         ca_fiqa_data_root=args.ca_fiqa_data_root,

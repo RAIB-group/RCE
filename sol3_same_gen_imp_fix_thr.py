@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Solution 3 Same number of pair of gen and imp rejection at Fix Threshold.
+"""
+Fixed-Threshold Proportional Pair Discard EDC (FT-PPD-EDC)
+
+Solution 3 Same number of pair of gen and imp rejection at Fix Threshold.
 Solution 3 Proportional rejection of genuine and impostor pairs at fixed threshold.
 
 Run:
@@ -924,7 +927,7 @@ def _list_embeddings_pkls(dir_path: str) -> list[str]:
     return preferred if len(preferred) else entries
 
 
-def run_prob2_test_set_batch(
+def run_prob1_test_set_batch(
     *,
     fr_features_root: str = DEFAULT_FR_FEATURES_ROOT,
     quality_dir: str = DEFAULT_QUALITY_DIR,
@@ -1094,7 +1097,7 @@ def run_prob2_test_set_batch(
 if __name__ == "__main__":
     import argparse
 
-    p = argparse.ArgumentParser(description="Batch-run EVR for IJCB EVD Problem 2")
+    p = argparse.ArgumentParser(description="Batch-run RCE for IJCB EDC Problem 1")
     p.add_argument(
         "--fr-features-root",
         default=DEFAULT_FR_FEATURES_ROOT,
@@ -1159,7 +1162,7 @@ if __name__ == "__main__":
     )
     args = p.parse_args()
 
-    run_prob2_test_set_batch(
+    run_prob1_test_set_batch(
         fr_features_root=args.fr_features_root,
         quality_dir=args.quality_dir,
         ca_fiqa_data_root=args.ca_fiqa_data_root,
