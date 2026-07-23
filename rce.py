@@ -3,7 +3,7 @@
 
 Run:
 
-    python sol4_ranking.py \
+    python rce.py \
         --fr-features-root /home/bw/FIQA/fiq_baselines/fr_features \
         --quality-dir /home/bw/FIQA/fiq_baselines/quality_scores \
         --ca-fiqa-data-root /home/bw/FIQA/ca-fiqa/data \
@@ -13,7 +13,7 @@ Run:
 
 To run everything (all datasets / all FR models found under `--fr-features-root`):
 
-    python sol4_ranking.py --run-all --fmr 0.001 --threshold-method roc --weight-alphas 0,1,2
+    python rce.py --run-all --fmr 0.001 --threshold-method roc --weight-alphas 0,1,2
 
 This script scans all datasets and FR models under:
 
