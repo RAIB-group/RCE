@@ -7,15 +7,15 @@ _Accepted at the IEEE/IAPR International Joint Conference on Biometrics (IJCB 20
 ## Table of Contents
 
 - [Abstract](#abstract)
-- [Compute RCE Score](#compute-rce-score)
-- [Input Structure](#input-structure)
+- [Installation and RCE Score Computation](#installation-and-rce-score-computation)
 - [Citation](#citation)
 - [Acknowledgement](#acknowledgement)
 - [License](#license)
 
 ## Abstract
 
-Face Image Quality Assessment (FIQA) aims to estimate the utility of facial images for reliable recognition. The evaluation of FIQA methods is predominantly based on the Error-versus-Discard Characteristic (EDC), which evaluates performance by progressively discarding low-quality samples and measuring recognition error on the retained subset. In this work, we demonstrate that the widely used EDC protocol has fundamental limitations: Test-Set Divergence and Threshold Drift, which together limit the reliability and comparability of FIQA methods. To address this, we propose discard-based EDC variants and a rank-based Rank Consistency Evaluation (RCE) metric that operates on the entire test set without discarding samples, using a fixed decision threshold. Extensive experiments on five datasets, four face recognition models, and 15 state-of-the-art FIQA methods demonstrate both the limitations of EDC and the effectiveness of the proposed approaches in enabling a more reliable and comparable evaluation.Despite evaluated on face images only, the limitations arise from the EDC protocol rather than the biometric modality, suggesting a broader applicability to biometric quality assessment in general.
+The standard evaluation protocol for Face Image Quality Assessment, the Error-versus-Discard Characteristic (EDC), has fundamental limitations. EDC progressively discards low-quality samples and measures recognition error on the retained subset. This causes different FIQA methods to be evaluated on different test sets (Test-Set Divergence) and at changing recognition operating points (Threshold Drift), limiting the reliability and comparability of the evaluation. To address this, we propose discard-based EDC variants and a rank-based Rank Consistency Evaluation (RCE) metric that operates on the entire test set without discarding samples, using a fixed decision threshold. This repository provides ready-to-use code for computing RCE scores.
+
 
 <p align="center">
 <img src="assets/limitation.jpg" width="85%" alt="Limitations of the EDC Protocol." />
@@ -30,18 +30,53 @@ Figure: **Limitations of the EDC Protocol.** With increasing discard rates the F
 Figure: **Visualization of the RCE framework.** In Rank Consistency Evaluation (RCE), the reference ranking is constructed from recognition errors in the test set, with ties resolved based on the maximum imposter-minimum genuine margin. The final RCE score is computed as the weighted rank correlation between the reference ranking and the ranking based on the FIQA predictions.
 
 
+## Results
 
-## Compute RCE Score
 
-Run the following command to compute the Rank Consistency Evaluation (RCE) scores:
+<table>
+    <tr>
+        <td align="center"><img src="assets/prob_pair_overlap_adience.jpg" width="100%" alt="Adience" /></td>
+        <td align="center"><img src="assets/prob_pair_overlap_xqlfw.jpg" width="100%" alt="XQLFW" /></td>
+    </tr>
+    <tr>
+        <td align="center">Adience</td>
+        <td align="center">XQLFW</td>
+    </tr>
+</table>
 
-Install dependencies:
+
+**Retained Pair-Set Overlap under EDC.** The plots quantify the pairwise overlap between the test sets of sample pairs retained by different FIQA methods at increasing discard rates. The rapid decline in overlap demonstrates that, under EDC, each method operates on increasingly disjoint subsets of the test data.
+
+
+<table>
+    <tr>
+        <td align="center"><img src="assets/prob_thr_fmr_adaface_adience.jpg" width="100%" alt="Adience" /></td>
+        <td align="center"><img src="assets/prob_thr_fmr_adaface_xqlfw.jpg" width="100%" alt="XQLFW" /></td>
+    </tr>
+    <tr>
+        <td align="center">Adience</td>
+        <td align="center">XQLFW</td>
+    </tr>
+</table>
+
+
+**Threshold Drift under EDC.** The plots show how the decision threshold evolves with increasing discard rate across datasets and face recognition models. To quantify its impact, the threshold shifts are translated into corresponding changes in FMR on the full dataset. The results show that EDC drives different methods to operate at substantially different decision points, undermining direct comparability.
+
+## Installation and RCE Score Computation
+
+This section explains how to install the required dependencies and run the code that computes the Rank Consistency Evaluation (RCE) scores.
+
+
+### Install dependencies:
 
 ```bash
 pip install numpy pandas scipy
 ```
 
-Replace `/home/bw/FIQA` with the path to your local repository.
+### Run the RCE Evaluation
+
+Run the following command to compute the Rank Consistency Evaluation (RCE) scores:
+
 
 ```bash
 python rce.py \
@@ -52,10 +87,24 @@ python rce.py \
         --threshold-method roc \
         --weight-alphas 0,3
 ```
+Replace `/home/bw/FIQA` with the path to your local repository.
 
-## Input Structure
+The main command-line arguments are:
+- `--fr-features-root`: Root directory containing the face recognition embeddings.
+- `--quality-dir`: Root directory containing the quality scores produced by the FIQA methods.
+- `--ca-fiqa-data-root`: Root directory containing the verification-pair definitions for each dataset.
+- `--out-root`: Directory where the computed RCE results are written.
+- `--threshold-method`: Method used to determine the fixed face recognition decision threshold.
+- `--weight-alphas`: Comma-separated weighting parameters used for the weighted rank-correlation computation.
 
-### Face Recognition Embeddings
+
+#### Required Input Data
+
+The RCE pipeline expects three inputs: face recognition embeddings, FIQA quality scores, and verification pairs.
+
+##### Face Recognition Embeddings
+
+These embeddings are produced by a face recognition model and are stored once per image. They are used to measure recognition similarity for each verification pair.
 
 ```text
 fr_features/
@@ -72,7 +121,9 @@ fr_features/
     └── arcface_o-embeddings.pkl
 ```
 
-#### Embedding PKL Format
+###### Embedding PKL Format
+
+Each key is an image filename and each value is the corresponding embedding vector.
 
 ```text
 {
@@ -83,7 +134,9 @@ fr_features/
 
 ---
 
-### FIQA Quality Scores
+##### FIQA Quality Scores
+
+These scores are the outputs of the FIQA method.
 
 ```text
 quality_scores/
@@ -99,7 +152,9 @@ quality_scores/
     └── lfw-quality.pkl
 ```
 
-#### Quality Score PKL Format
+###### Quality Score PKL Format
+
+Each key is an image filename and each value is the predicted quality score for that image.
 
 ```text
 {
@@ -110,7 +165,9 @@ quality_scores/
 
 ---
 
-### Verification Pairs
+##### Verification Pairs
+
+This file lists the image pairs that should be evaluated. The labels tell the code whether a pair is genuine or impostor, which is needed to compute the recognition error statistics used by RCE.
 
 ```text
 data/
@@ -128,7 +185,9 @@ data/
         └── pairs.csv
 ```
 
-#### Pairs CSV Format
+###### Pairs CSV Format
+
+Each row contains two image identifiers and their pair label.
 
 ```text
 img1_id,img2_id,label
@@ -147,11 +206,11 @@ Labels:
 If you use this code in your work, please cite the following paper:
 
 ```bibtex
-@inproceedings{wani2026rce,
-    author    = {Wani, Bhavesh and Babnik, {\v{Z}}iga and {\v{S}}truc, Vitomir and Terh{\"o}rst, Philipp},
-    title     = {Beyond Error-vs-Discard Characteristic: Toward Stable and Reliable Evaluation for Face Image Quality Assessment},
-    booktitle = {Proceedings of the IEEE/IAPR International Joint Conference on Biometrics (IJCB)},
-    year      = {2026}
+@inproceedings{wani2026rce, 
+author = {Bhavesh Wani and {\v{Z}}iga Babnik and Vitomir {\v{S}}truc and Philipp Terh{\"o}rst}, 
+title = {Beyond Error-vs-Discard Characteristic: Toward Stable and Reliable Evaluation for Face Image Quality Assessment}, 
+booktitle = {{IEEE} International Joint Conference on Biometrics, {IJCB} 2026, Rome, Italy, September 1--4, 2026}, 
+year = {2026} 
 }
 ```
 
