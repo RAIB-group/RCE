@@ -7,8 +7,8 @@ _Accepted at the IEEE/IAPR International Joint Conference on Biometrics (IJCB 20
 ## Table of Contents
 
 - [Abstract](#abstract)
-- [Installation and RCE Score Computation](#installation-and-rce-score-computation)
 - [Results](#results)
+- [Installation and RCE Score Computation](#installation-and-rce-score-computation)
 - [Citation](#citation)
 - [Acknowledgement](#acknowledgement)
 - [License](#license)
