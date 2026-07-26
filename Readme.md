@@ -8,6 +8,7 @@ _Accepted at the IEEE/IAPR International Joint Conference on Biometrics (IJCB 20
 
 - [Abstract](#abstract)
 - [Installation and RCE Score Computation](#installation-and-rce-score-computation)
+- [Results](#results)
 - [Citation](#citation)
 - [Acknowledgement](#acknowledgement)
 - [License](#license)
@@ -18,7 +19,7 @@ The standard evaluation protocol for Face Image Quality Assessment, the Error-ve
 
 
 <p align="center">
-<img src="assets/limitation.jpg" width="85%" alt="Limitations of the EDC Protocol." />
+<img src="assets/limitation.jpg" width="85%" style="max-height: 300px;" alt="Limitations of the EDC Protocol." />
 </p>
 
 Figure: **Limitations of the EDC Protocol.** With increasing discard rates the FIQA methods (a) are evaluated on progressively different test sets (Test-Set Divergence) and (b) operate on completely different opertation points (Threshold Drift), leading to limited comparability of different FIQA methods.
