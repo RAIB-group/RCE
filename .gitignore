@@ -48,3 +48,5 @@ dist/
 results/
 outputs/
 tmp/
+output/
+output_submission/

@@ -2,7 +2,7 @@
 
 _Accepted at the IEEE/IAPR International Joint Conference on Biometrics (IJCB 2026)._
 
-* [Research Paper](#) *(Link coming soon)*
+* [Research Paper](https://arxiv.org/pdf/2607.22752)
 
 ## Table of Contents
 
